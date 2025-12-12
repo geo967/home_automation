@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
 
@@ -77,6 +78,13 @@ class MainActivity : AppCompatActivity() {
                             // Got an ID token from Google. Use it to authenticate
                             // with your backend.
                             Log.d("TAG", "Got ID token.")
+
+                            // move to next screen
+                            val intent = Intent(this, HomeScreen::class.java)
+                            intent.putExtra("ID_TOKEN", idToken)
+                            startActivity(intent)
+                            finish()  // prevents returning back to login
+
                         }
                         password != null -> {
                             // Got a saved username and password. Use them to authenticate
