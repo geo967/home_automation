@@ -3,8 +3,11 @@ package com.cblue.home_automation
 
 import android.content.Intent
 import android.content.IntentSender
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
+import android.util.Log.e
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +19,10 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import kotlin.apply
 import kotlin.jvm.java
+import kotlin.text.clear
+import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +35,35 @@ class MainActivity : AppCompatActivity() {
     private val REQ_ONE_TAP = 100  // Can be any integer unique to the Activity
     private var showOneTapUI = true
 
+    private val PREFS_NAME = "auth_prefs"
+    private val KEY_ID_TOKEN = "id_token"
+
+    private fun saveToken(token: String) {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .edit {
+                putString(KEY_ID_TOKEN, token)
+            }
+    }
+
+    private fun getToken(): String? {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .getString(KEY_ID_TOKEN, null)
+    }
+
+    private fun clearToken() {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .edit {
+                clear()
+            }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = cm.activeNetwork ?: return false
+        val capabilities = cm.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +72,23 @@ class MainActivity : AppCompatActivity() {
         binding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         googleSignInButton = binding.buttonGoogleSignIn
 
         oneTapClient = Identity.getSignInClient(this)
+        val cachedToken = getToken()
+
+        if (cachedToken != null) {
+            if (isNetworkAvailable()) {
+                // Silent login success
+                navigateToHome(cachedToken)
+                return
+            } else {
+                // Network unavailable → force logout
+                forceLogout()
+                return
+            }
+        }
+
         signInRequest = BeginSignInRequest.builder()
             .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
                 .setSupported(true)
@@ -63,6 +111,23 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun navigateToHome(token: String) {
+        val intent = Intent(this, HomeScreen::class.java)
+        intent.putExtra("ID_TOKEN", token)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun forceLogout() {
+        clearToken()
+
+        oneTapClient.signOut()
+
+        Log.d("TAG", "Forced logout due to no network")
+
+        // Stay on login screen
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -78,6 +143,11 @@ class MainActivity : AppCompatActivity() {
                             // Got an ID token from Google. Use it to authenticate
                             // with your backend.
                             Log.d("TAG", "Got ID token.")
+                                // ✅ SAVE TOKEN
+                                saveToken(idToken)
+
+                                navigateToHome(idToken)
+
 
                             // move to next screen
                             val intent = Intent(this, HomeScreen::class.java)
