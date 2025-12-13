@@ -1,0 +1,16 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    xmlns:tools="http://schemas.android.com/tools"
+4    package="com.cblue.android_nsd" >
+5
+6    <uses-sdk android:minSdkVersion="26" />
+7
+8    <uses-permission android:name="android.permission.INTERNET" />
+8-->C:\Users\geoma\AndroidStudioProjects\home_automation\android-nsd\src\main\AndroidManifest.xml:6:5-66
+8-->C:\Users\geoma\AndroidStudioProjects\home_automation\android-nsd\src\main\AndroidManifest.xml:6:22-64
+9
+10    <application tools:ignore="AllowBackup,GoogleAppIndexingWarning,MissingApplicationIcon" />
+10-->C:\Users\geoma\AndroidStudioProjects\home_automation\android-nsd\src\main\AndroidManifest.xml:8:5-9:85
+10-->C:\Users\geoma\AndroidStudioProjects\home_automation\android-nsd\src\main\AndroidManifest.xml:9:9-83
+11
+12</manifest>
