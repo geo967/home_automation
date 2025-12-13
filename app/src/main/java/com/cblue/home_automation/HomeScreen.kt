@@ -1,5 +1,6 @@
 package com.cblue.home_automation
 
+import android.R.id.toggle
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -11,13 +12,18 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cblue.android_nsd.flow.library.nsd.rx.NsdManagerFlow
+import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryConfiguration
+import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryEvent
+import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryServiceFound
+import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryServiceLost
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class HomeScreen : AppCompatActivity() {
 
     private val toggleButton: Button by bind(R.id.toggle)
     private val statusTextView: TextView by bind(R.id.status)

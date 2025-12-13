@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "home_automation"
 include(":app")
- 
+include(":android-nsd")
