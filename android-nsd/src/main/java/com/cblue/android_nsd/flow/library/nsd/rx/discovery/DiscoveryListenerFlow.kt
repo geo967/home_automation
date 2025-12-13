@@ -1,10 +1,10 @@
-package com.toxicbakery.library.nsd.rx.discovery
+package com.cblue.android_nsd.flow.library.nsd.rx.discovery
 
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
-import com.toxicbakery.library.nsd.rx.DiscoveryStartFailedException
-import com.toxicbakery.library.nsd.rx.DiscoveryStopFailedException
-import com.toxicbakery.library.nsd.rx.INsdManagerCompat
+import com.cblue.android_nsd.flow.library.nsd.rx.DiscoveryStartFailedException
+import com.cblue.android_nsd.flow.library.nsd.rx.DiscoveryStopFailedException
+import com.cblue.android_nsd.flow.library.nsd.rx.INsdManagerCompat
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
