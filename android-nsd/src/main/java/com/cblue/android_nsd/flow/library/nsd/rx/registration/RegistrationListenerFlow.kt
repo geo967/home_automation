@@ -1,10 +1,10 @@
-package com.toxicbakery.library.nsd.rx.registration
+package com.cblue.android_nsd.flow.library.nsd.rx.registration
 
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
-import com.toxicbakery.library.nsd.rx.INsdManagerCompat
-import com.toxicbakery.library.nsd.rx.RegistrationFailedException
-import com.toxicbakery.library.nsd.rx.UnregistrationFailedException
+import com.cblue.android_nsd.flow.library.nsd.rx.INsdManagerCompat
+import com.cblue.android_nsd.flow.library.nsd.rx.RegistrationFailedException
+import com.cblue.android_nsd.flow.library.nsd.rx.UnregistrationFailedException
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
