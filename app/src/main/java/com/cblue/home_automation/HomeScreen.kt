@@ -2,14 +2,18 @@ package com.cblue.home_automation
 
 import android.R.id.toggle
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cblue.android_nsd.flow.library.nsd.rx.NsdManagerFlow
@@ -17,6 +21,7 @@ import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryConfiguratio
 import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryEvent
 import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryServiceFound
 import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryServiceLost
+import kotlin.jvm.java
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +37,7 @@ class HomeScreen : AppCompatActivity() {
     private val nsdManagerRx: NsdManagerFlow by lazy { NsdManagerFlow(this) }
     private val adapter: DiscoveryAdapter by lazy { DiscoveryAdapter() }
     private var jobState = MutableStateFlow<Job?>(null)
+    private val viewModel: DiscoveryViewModel by viewModels()
 
     private fun <T : View> Activity.bind(@IdRes id: Int) = lazy { findViewById<T>(id) }
 
@@ -47,6 +53,20 @@ class HomeScreen : AppCompatActivity() {
                 false
             )
         recyclerView.adapter = adapter
+
+        adapter.setOnItemClickListener { device ->
+          viewModel.onDeviceClicked(device)
+        }
+
+        viewModel.ipDetails.observe(this) { details ->
+            val intent = Intent(this, DeviceDetailsActivity::class.java)
+            intent.putExtra("DETAILS", details)
+            startActivity(intent)
+        }
+
+        viewModel.error.observe(this) { error ->
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+        }
 
         toggleButton.setOnClickListener { toggle() }
         updateUI()
