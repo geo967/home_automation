@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="6dp">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:layout_marginTop="120dp"
+        android:background="@android:color/white">
+
+        <!-- Row template -->
+        <!-- IP -->
+        <TableRow>
+            <TextView
+                android:text="IP Address"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvIp"
+                style="@style/ValueText" />
+        </TableRow>
+
+        <!-- Hostname -->
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hostname"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvHostname"
+                style="@style/ValueText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:textColor="#444444"
+                android:maxLines="10"
+                android:breakStrategy="balanced"
+                android:hyphenationFrequency="none"/>
+        </TableRow>
+
+        <!-- City -->
+        <TableRow>
+            <TextView
+                android:text="City"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvCity"
+                style="@style/ValueText" />
+        </TableRow>
+
+        <!-- Region -->
+        <TableRow>
+            <TextView
+                android:text="Region"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvRegion"
+                style="@style/ValueText" />
+        </TableRow>
+
+        <!-- Country -->
+        <TableRow>
+            <TextView
+                android:text="Country"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvCountry"
+                style="@style/ValueText" />
+        </TableRow>
+
+        <!-- Location -->
+        <TableRow>
+            <TextView
+                android:text="Location"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvLocation"
+                style="@style/ValueText" />
+        </TableRow>
+
+        <!-- Organization -->
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Organization"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvOrg"
+                style="@style/ValueText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:textColor="#444444"
+                android:maxLines="10"
+                android:breakStrategy="balanced"
+                android:hyphenationFrequency="none"/>
+        </TableRow>
+
+        <!-- Postal -->
+        <TableRow>
+            <TextView
+                android:text="Postal Code"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvPostal"
+                style="@style/ValueText" />
+        </TableRow>
+
+        <!-- Timezone -->
+        <TableRow>
+            <TextView
+                android:text="Timezone"
+                style="@style/LabelText" />
+
+            <TextView
+                android:id="@+id/tvTimezone"
+                style="@style/ValueText" />
+        </TableRow>
+
+    </TableLayout>
+</ScrollView>

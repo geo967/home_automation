@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Home_automation">
         <activity
+            android:name=".DeviceDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeScreen"
             android:exported="false" />
         <activity
