@@ -1,8 +1,8 @@
-package com.toxicbakery.library.nsd.rx.resolve
+package com.cblue.android_nsd.flow.library.nsd.rx.resolve
 
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
-import com.toxicbakery.library.nsd.rx.ResolveFailedException
+import com.cblue.android_nsd.flow.library.nsd.rx.ResolveFailedException
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
