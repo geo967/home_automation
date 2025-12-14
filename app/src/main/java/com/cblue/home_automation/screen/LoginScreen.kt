@@ -34,35 +34,7 @@ class LoginScreen : AppCompatActivity() {
 
     private val PREFS_NAME = "auth_prefs"
     private val KEY_ID_TOKEN = "id_token"
-
-    private fun saveToken(token: String) {
-        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-            .edit {
-                putString(KEY_ID_TOKEN, token)
-            }
-    }
-
-    private fun getToken(): String? {
-        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-            .getString(KEY_ID_TOKEN, null)
-    }
-
-    private fun clearToken() {
-        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-            .edit {
-                clear()
-            }
-    }
-
-    private fun isNetworkAvailable(): Boolean {
-        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = cm.activeNetwork ?: return false
-        val capabilities = cm.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    }
-
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -72,36 +44,10 @@ class LoginScreen : AppCompatActivity() {
         googleSignInButton = binding.buttonGoogleSignIn
 
         oneTapClient = Identity.getSignInClient(this)
-        val cachedToken = getToken()
 
-        if (cachedToken != null) {
-            if (isNetworkAvailable()) {
-                // Silent login success
-                navigateToHome(cachedToken)
-                return
-            } else {
-                // Network unavailable → force logout
-                forceLogout()
-                return
-            }
-        }
+        if (isTokenCached()) return
 
-        signInRequest = BeginSignInRequest.builder()
-            .setPasswordRequestOptions(
-                BeginSignInRequest.PasswordRequestOptions.builder()
-                .setSupported(true)
-                .build())
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    // Your server's client ID, not your Android client ID.
-                    .setServerClientId("247378962438-o3ldmr4hj5km4b6kae9aj2e69qdp286g.apps.googleusercontent.com")
-                    // Only show accounts previously used to sign in.
-                    .setFilterByAuthorizedAccounts(false)
-                    .build())
-            // Automatically sign in when exactly one credential is retrieved.
-            .setAutoSelectEnabled(true)
-            .build()
+        initialiseSignInRequest()
 
         googleSignInButton.setOnClickListener {
             showGoogleLoading(true)
@@ -110,21 +56,39 @@ class LoginScreen : AppCompatActivity() {
 
     }
 
-    private fun navigateToHome(token: String) {
-        val intent = Intent(this, DeviceListScreen::class.java)
-        intent.putExtra("ID_TOKEN", token)
-        startActivity(intent)
-        finish()
+    private fun isTokenCached(): Boolean {
+        val cachedToken = getToken()
+        if (cachedToken != null) {
+            if (isNetworkAvailable()) {
+                navigateToHome(cachedToken)
+                return true
+            } else {
+                forceLogout()
+                return true
+            }
+        }
+        return false
     }
 
-    private fun forceLogout() {
-        clearToken()
-
-        oneTapClient.signOut()
-
-        Log.d("TAG", "Forced logout due to no network")
-
-        // Stay on login screen
+    private fun initialiseSignInRequest() {
+        signInRequest = BeginSignInRequest.builder()
+            .setPasswordRequestOptions(
+                BeginSignInRequest.PasswordRequestOptions.builder()
+                    .setSupported(true)
+                    .build()
+            )
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    // Your server's client ID, not your Android client ID.
+                    .setServerClientId("247378962438-o3ldmr4hj5km4b6kae9aj2e69qdp286g.apps.googleusercontent.com")
+                    // Only show accounts previously used to sign in.
+                    .setFilterByAuthorizedAccounts(false)
+                    .build()
+            )
+            // Automatically sign in when exactly one credential is retrieved.
+            .setAutoSelectEnabled(true)
+            .build()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -141,11 +105,10 @@ class LoginScreen : AppCompatActivity() {
                         idToken != null -> {
                             // Got an ID token from Google. Use it to authenticate
                             // with your backend.
-                            Log.d("TAG", "Got ID token.")
-                                // ✅ SAVE TOKEN
-                                saveToken(idToken)
+                            // ✅ SAVE TOKEN
+                            saveToken(idToken)
 
-                                navigateToHome(idToken)
+                            navigateToHome(idToken)
 
 
                             // move to next screen
@@ -168,12 +131,10 @@ class LoginScreen : AppCompatActivity() {
                 } catch (e: ApiException) {
                     when (e.statusCode) {
                         CommonStatusCodes.CANCELED -> {
-                            Log.d("TAG", "One-tap dialog was closed.")
                             // Don't re-prompt the user.
                             showOneTapUI = false
                         }
                         CommonStatusCodes.NETWORK_ERROR -> {
-                            Log.d("TAG", "One-tap encountered a network error.")
                             // Try again or just ignore.
                         }
                         else -> {
@@ -184,6 +145,19 @@ class LoginScreen : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun navigateToHome(token: String) {
+        val intent = Intent(this, DeviceListScreen::class.java)
+        intent.putExtra("ID_TOKEN", token)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun forceLogout() {
+        clearToken()
+        oneTapClient.signOut()
+        // Stay on login screen
     }
 
     private fun googleSignIn(){
@@ -237,6 +211,32 @@ class LoginScreen : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("TAG", "Unable to open account settings", e)
         }
+    }
+
+    private fun saveToken(token: String) {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .edit {
+                putString(KEY_ID_TOKEN, token)
+            }
+    }
+
+    private fun getToken(): String? {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .getString(KEY_ID_TOKEN, null)
+    }
+
+    private fun clearToken() {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .edit {
+                clear()
+            }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = cm.activeNetwork ?: return false
+        val capabilities = cm.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
 }
