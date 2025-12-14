@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -61,14 +62,9 @@ dependencies {
     val room_version = "2.8.4"
 
     implementation("androidx.room:room-runtime:$room_version")
-
-    // If this project only uses Java source, use the Java annotationProcessor
-    // No additional plugins are necessary
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
-
+    kapt("androidx.room:room-compiler:$room_version")
     // optional - RxJava2 support for Room
     implementation("androidx.room:room-rxjava2:$room_version")
 
