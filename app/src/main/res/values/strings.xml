@@ -10,7 +10,7 @@
     <string name="activity_main_title">Demo</string>
     <string name="activity_main_status_discovery_on">Discovering</string>
     <string name="activity_main_status_discovery_off">Disabled</string>
-    <string name="activity_main_toggle_discovery">Toggle</string>
+    <string name="activity_main_toggle_discovery">Search Devices</string>
 
     <string name="google_server_client_id">
     247378962438-o3ldmr4hj5km4b6kae9aj2e69qdp286g.apps.googleusercontent.com
