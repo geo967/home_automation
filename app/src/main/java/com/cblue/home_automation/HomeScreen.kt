@@ -37,6 +37,7 @@ class HomeScreen : AppCompatActivity() {
     private val adapter: DiscoveryAdapter by lazy { DiscoveryAdapter() }
     private var jobState = MutableStateFlow<Job?>(null)
     private val viewModel: DiscoveryViewModel by viewModels()
+    private val progressBar: View by bind(R.id.progressBar)
 
     private fun <T : View> Activity.bind(@IdRes id: Int) = lazy { findViewById<T>(id) }
 
@@ -65,6 +66,10 @@ class HomeScreen : AppCompatActivity() {
 
         viewModel.error.observe(this) { error ->
             Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.loading.observe(this) { isLoading ->
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
         toggleButton.setOnClickListener { toggle() }
