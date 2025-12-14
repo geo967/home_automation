@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -103,6 +104,7 @@ class LoginScreen : AppCompatActivity() {
             .build()
 
         googleSignInButton.setOnClickListener {
+            showGoogleLoading(true)
             googleSignIn()
         }
 
@@ -187,18 +189,23 @@ class LoginScreen : AppCompatActivity() {
     private fun googleSignIn(){
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener(this) { result ->
+                showGoogleLoading(false)
                 try {
                     startIntentSenderForResult(
                         result.pendingIntent.intentSender, REQ_ONE_TAP,
                         null, 0, 0, 0, null)
                 } catch (e: IntentSender.SendIntentException) {
+                    showGoogleLoading(false)
                     Log.e("TAG", "Couldn't start One Tap UI: ${e.localizedMessage}")
                 }
             }
-            .addOnFailureListener(this) { e ->
-                // No saved credentials found. Launch the One Tap sign-up flow, or
-                // do nothing and continue presenting the signed-out UI.
-                Log.d("TAG", e.localizedMessage)
+            .addOnFailureListener(this) { _ ->
+                showGoogleLoading(false)
+                Toast.makeText(
+                    this,
+                    "No Google account found. Please add one to continue.",
+                    Toast.LENGTH_LONG
+                ).show()
                 openAddGoogleAccount()
             }
     }
