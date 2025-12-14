@@ -1,135 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="6dp">
+    android:background="#F5F7FA"
+    android:padding="16dp">
 
-    <TableLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="1"
-        android:layout_marginTop="120dp"
-        android:background="@android:color/white">
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardUseCompatPadding="true">
 
-        <!-- Row template -->
-        <!-- IP -->
-        <TableRow>
-            <TextView
-                android:text="IP Address"
-                style="@style/LabelText" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
+            <!-- Header -->
             <TextView
-                android:id="@+id/tvIp"
-                style="@style/ValueText" />
-        </TableRow>
-
-        <!-- Hostname -->
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
+                android:text="Device Information"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hostname"
-                style="@style/LabelText" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#212121"
+                android:layout_marginBottom="16dp" />
 
-            <TextView
-                android:id="@+id/tvHostname"
-                style="@style/ValueText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="8dp"
-                android:textColor="#444444"
-                android:maxLines="10"
-                android:breakStrategy="balanced"
-                android:hyphenationFrequency="none"/>
-        </TableRow>
+            <!-- Info Rows -->
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowIp" />
 
-        <!-- City -->
-        <TableRow>
-            <TextView
-                android:text="City"
-                style="@style/LabelText" />
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowHostname" />
 
-            <TextView
-                android:id="@+id/tvCity"
-                style="@style/ValueText" />
-        </TableRow>
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowCity" />
 
-        <!-- Region -->
-        <TableRow>
-            <TextView
-                android:text="Region"
-                style="@style/LabelText" />
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowRegion" />
 
-            <TextView
-                android:id="@+id/tvRegion"
-                style="@style/ValueText" />
-        </TableRow>
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowCountry" />
 
-        <!-- Country -->
-        <TableRow>
-            <TextView
-                android:text="Country"
-                style="@style/LabelText" />
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowLocation" />
 
-            <TextView
-                android:id="@+id/tvCountry"
-                style="@style/ValueText" />
-        </TableRow>
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowOrg" />
 
-        <!-- Location -->
-        <TableRow>
-            <TextView
-                android:text="Location"
-                style="@style/LabelText" />
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowPostal" />
 
-            <TextView
-                android:id="@+id/tvLocation"
-                style="@style/ValueText" />
-        </TableRow>
+            <include layout="@layout/content_device_details"
+                android:id="@+id/rowTimezone" />
 
-        <!-- Organization -->
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Organization"
-                style="@style/LabelText" />
+        </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvOrg"
-                style="@style/ValueText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="8dp"
-                android:textColor="#444444"
-                android:maxLines="10"
-                android:breakStrategy="balanced"
-                android:hyphenationFrequency="none"/>
-        </TableRow>
+    </com.google.android.material.card.MaterialCardView>
 
-        <!-- Postal -->
-        <TableRow>
-            <TextView
-                android:text="Postal Code"
-                style="@style/LabelText" />
-
-            <TextView
-                android:id="@+id/tvPostal"
-                style="@style/ValueText" />
-        </TableRow>
-
-        <!-- Timezone -->
-        <TableRow>
-            <TextView
-                android:text="Timezone"
-                style="@style/LabelText" />
-
-            <TextView
-                android:id="@+id/tvTimezone"
-                style="@style/ValueText" />
-        </TableRow>
-
-    </TableLayout>
 </ScrollView>
