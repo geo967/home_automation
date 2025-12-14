@@ -81,7 +81,7 @@ class LoginScreen : AppCompatActivity() {
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     // Your server's client ID, not your Android client ID.
-                    .setServerClientId("247378962438-o3ldmr4hj5km4b6kae9aj2e69qdp286g.apps.googleusercontent.com")
+                    .setServerClientId(getString(R.string.google_server_client_id))
                     // Only show accounts previously used to sign in.
                     .setFilterByAuthorizedAccounts(false)
                     .build()
@@ -96,6 +96,7 @@ class LoginScreen : AppCompatActivity() {
 
         when (requestCode) {
             REQ_ONE_TAP -> {
+                showGoogleLoading(false)
                 try {
                     val credential = oneTapClient.getSignInCredentialFromIntent(data)
                     val idToken = credential.googleIdToken
@@ -107,16 +108,7 @@ class LoginScreen : AppCompatActivity() {
                             // with your backend.
                             // ✅ SAVE TOKEN
                             saveToken(idToken)
-
                             navigateToHome(idToken)
-
-
-                            // move to next screen
-                            val intent = Intent(this, DeviceListScreen::class.java)
-                            intent.putExtra("ID_TOKEN", idToken)
-                            startActivity(intent)
-                            finish()  // prevents returning back to login
-
                         }
                         password != null -> {
                             // Got a saved username and password. Use them to authenticate
