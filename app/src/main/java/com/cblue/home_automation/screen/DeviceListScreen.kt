@@ -3,7 +3,6 @@ package com.cblue.home_automation.screen
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -12,21 +11,22 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cblue.android_nsd.flow.library.nsd.rx.NsdManagerFlow
 import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryConfiguration
-import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryEvent
 import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryServiceFound
 import com.cblue.android_nsd.flow.library.nsd.rx.discovery.DiscoveryServiceLost
-import com.cblue.home_automation.screen.DeviceDetailsScreen
-import com.cblue.home_automation.adapter.DiscoveryAdapter
-import com.cblue.home_automation.viewmodel.DiscoveryViewModel
 import com.cblue.home_automation.R
+import com.cblue.home_automation.adapter.DiscoveryAdapter
+import com.cblue.home_automation.database.AppDatabase
+import com.cblue.home_automation.model.DiscoveryRecord
+import com.cblue.home_automation.repository.DeviceRepository
+import com.cblue.home_automation.util.DiscoveryVMFactory
 import com.cblue.home_automation.util.toDiscoveryRecord
+import com.cblue.home_automation.viewmodel.DiscoveryViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
@@ -38,8 +38,13 @@ class DeviceListScreen : AppCompatActivity() {
 
     private val nsdManagerRx: NsdManagerFlow by lazy { NsdManagerFlow(this) }
     private val adapter: DiscoveryAdapter by lazy { DiscoveryAdapter() }
-    private var jobState = MutableStateFlow<Job?>(null)
-    private val viewModel: DiscoveryViewModel by viewModels()
+    private val viewModel: DiscoveryViewModel by viewModels {
+        DiscoveryVMFactory(
+            DeviceRepository(AppDatabase.get(this).deviceDao())
+        )
+    }
+    private var discoveryJob: Job? = null
+
     private val progressBar: View by bind(R.id.progressBar)
 
     private fun <T : View> Activity.bind(@IdRes id: Int) = lazy { findViewById<T>(id) }
@@ -75,8 +80,22 @@ class DeviceListScreen : AppCompatActivity() {
             progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
+        viewModel.devices.observe(this) { cached ->
+            adapter.submitList(cached.map {
+                DiscoveryRecord(it.name,it.address)
+            })
+        }
+
+        viewModel.isDiscovering.observe(this) { discovering ->
+            statusTextView.setText(
+                if (discovering)
+                    R.string.activity_main_status_discovery_on
+                else
+                    R.string.activity_main_status_discovery_off
+            )
+        }
+
         toggleButton.setOnClickListener { toggle() }
-        updateUI()
     }
 
     override fun onDestroy() {
@@ -84,44 +103,42 @@ class DeviceListScreen : AppCompatActivity() {
         stopDiscovery()
     }
 
-    private fun updateUI() {
-        statusTextView.setText(
-            if (jobState.value == null) R.string.activity_main_status_discovery_off
-            else R.string.activity_main_status_discovery_on
-        )
-    }
-
     private fun toggle() {
-        if (jobState.value == null) startDiscovery()
+        if (discoveryJob == null) startDiscovery()
         else stopDiscovery()
     }
 
     private fun startDiscovery() {
-        jobState.value = MainScope().launch {
-            nsdManagerRx.discoverServices(DiscoveryConfiguration("_services._dns-sd._udp"))
-                .catch { e -> Log.e(TAG, "Error starting discovery.", e) }
-                .collect(::addServiceFromEvent)
-        }
-        updateUI()
-    }
+        if (discoveryJob != null) return
+        viewModel.setDiscovering(true)
 
-    private fun addServiceFromEvent(event: DiscoveryEvent) {
-        Log.d(TAG, "Event $event")
-        when (event) {
-            is DiscoveryServiceFound -> adapter.addItem(event.service.toDiscoveryRecord())
-            is DiscoveryServiceLost -> adapter.removeItem(event.service.toDiscoveryRecord())
-            else -> {}
+        discoveryJob = lifecycleScope.launch {
+            nsdManagerRx
+                .discoverServices(DiscoveryConfiguration("_services._dns-sd._udp"))
+                .catch { _ ->
+                    viewModel.setDiscovering(false)}
+                .collect { event ->
+                    when (event) {
+                        is DiscoveryServiceFound -> {
+                            val record = event.service.toDiscoveryRecord()
+                            adapter.addItem(record)
+                            viewModel.onDeviceDiscovered(record) // ✅ VM only handles data
+                        }
+                        is DiscoveryServiceLost -> {
+                            adapter.removeItem(event.service.toDiscoveryRecord())
+                        }
+
+                        else -> {}
+                    }
+                }
         }
     }
 
     private fun stopDiscovery() {
-        jobState.value?.cancel()
-        jobState.value = null
-        updateUI()
+        discoveryJob?.cancel()
+        discoveryJob = null
+        viewModel.setDiscovering(false)
         adapter.clear()
     }
 
-    companion object {
-        private const val TAG = "MainActivity"
-    }
 }

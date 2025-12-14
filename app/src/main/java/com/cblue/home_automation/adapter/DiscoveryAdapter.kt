@@ -5,17 +5,54 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cblue.home_automation.R
 import com.cblue.home_automation.model.DiscoveryRecord
 import kotlin.properties.Delegates
 
-class DiscoveryAdapter : RecyclerView.Adapter<DiscoveryAdapter.DiscoveryViewHolder>() {
+class DiscoveryAdapter : ListAdapter<DiscoveryRecord, DiscoveryAdapter.DiscoveryViewHolder>(DIFF) {
 
     private var onItemClick: ((DiscoveryRecord) -> Unit)? = null
 
+    companion object {
+        val DIFF = object : DiffUtil.ItemCallback<DiscoveryRecord>() {
+            override fun areItemsTheSame(a: DiscoveryRecord, b: DiscoveryRecord) = a.name == b.name
+            override fun areContentsTheSame(a: DiscoveryRecord, b: DiscoveryRecord) = a == b
+        }
+    }
+
+    override fun onBindViewHolder(holder: DiscoveryViewHolder, position: Int) {
+        holder.bind(items[position])
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoveryViewHolder =
+        LayoutInflater.from(parent.context)
+            .inflate(R.layout.content_item_discovery, parent, false)
+            .let { DiscoveryViewHolder(it) }
+
+    override fun getItemCount(): Int = items.size
+
     fun setOnItemClickListener(listener: (DiscoveryRecord) -> Unit) {
         onItemClick = listener
+    }
+
+    fun addItem(discoveryRecord: DiscoveryRecord) {
+        val count = itemCount
+        items = items.plus(discoveryRecord)
+        notifyItemInserted(count)
+    }
+
+    fun removeItem(discoveryRecord: DiscoveryRecord) {
+        val count = itemCount
+        items = items.minus(discoveryRecord)
+        notifyItemRemoved(count)
+    }
+
+    fun clear() {
+        val count = itemCount
+        items = listOf()
+        notifyItemRangeRemoved(0, count)
     }
 
     private fun <T> RecyclerView.Adapter<*>.autoNotify(old: List<T>, new: List<T>, compare: (T, T) -> Boolean) {
@@ -36,35 +73,6 @@ class DiscoveryAdapter : RecyclerView.Adapter<DiscoveryAdapter.DiscoveryViewHold
         autoNotify(old, new) { left, right -> left.name == right.name }
     }
 
-  //  private val items = listOf<DiscoveryRecord>(DiscoveryRecord("1212.1212"), DiscoveryRecord("34.2243.3"))
-    override fun onBindViewHolder(holder: DiscoveryViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoveryViewHolder =
-        LayoutInflater.from(parent.context)
-            .inflate(R.layout.content_item_discovery, parent, false)
-            .let { DiscoveryViewHolder(it) }
-
-    override fun getItemCount(): Int = items.size
-
-    fun addItem(discoveryRecord: DiscoveryRecord) {
-        val count = itemCount
-        items = items.plus(discoveryRecord)
-        notifyItemInserted(count)
-    }
-
-    fun removeItem(discoveryRecord: DiscoveryRecord) {
-        val count = itemCount
-        items = items.minus(discoveryRecord)
-        notifyItemRemoved(count)
-    }
-
-    fun clear() {
-        val count = itemCount
-        items = listOf()
-        notifyItemRangeRemoved(0, count)
-    }
 
     inner class DiscoveryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

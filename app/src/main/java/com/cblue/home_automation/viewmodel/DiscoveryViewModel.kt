@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cblue.home_automation.database.toDiscoveryRecord
 import com.cblue.home_automation.model.DiscoveryRecord
 import com.cblue.home_automation.model.IpDetails
+import com.cblue.home_automation.repository.DeviceRepository
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +15,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class DiscoveryViewModel : ViewModel() {
+class DiscoveryViewModel(
+    private val repository: DeviceRepository,
+) : ViewModel() {
 
     private val _ipDetails = MutableLiveData<IpDetails>()
     val ipDetails: LiveData<IpDetails> = _ipDetails
@@ -24,8 +28,35 @@ class DiscoveryViewModel : ViewModel() {
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
 
+    private val _devices = MutableLiveData<List<DiscoveryRecord>>()
+    val devices: LiveData<List<DiscoveryRecord>> = _devices
+
+    private val _isDiscovering = MutableLiveData(false)
+    val isDiscovering: LiveData<Boolean> = _isDiscovering
+
+    init {
+        loadCachedDevices()
+    }
+
+    fun setDiscovering(isDiscovering: Boolean) {
+        _isDiscovering.postValue(isDiscovering)
+    }
+
+    fun onDeviceDiscovered(record: DiscoveryRecord) {
+        viewModelScope.launch {
+            repository.upsertOnline(record)
+        }
+    }
+
     fun onDeviceClicked(device: DiscoveryRecord) {
         fetchDeviceDetails(device.name)
+    }
+
+    private fun loadCachedDevices() {
+        viewModelScope.launch {
+            val cached = repository.getAllDevices()
+            _devices.postValue(cached.map { it.toDiscoveryRecord() })
+        }
     }
 
     private fun fetchDeviceDetails(deviceId: String) {
