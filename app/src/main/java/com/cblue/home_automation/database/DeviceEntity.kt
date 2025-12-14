@@ -2,7 +2,7 @@ package com.cblue.home_automation.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.cblue.home_automation.DiscoveryRecord
+import com.cblue.home_automation.model.DiscoveryRecord
 
 @Entity(tableName = "devices")
 data class DeviceEntity(

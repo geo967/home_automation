@@ -18,13 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Home_automation">
         <activity
-            android:name=".DeviceDetailsActivity"
+            android:name=".screen.DeviceDetailsScreen"
             android:exported="false" />
         <activity
-            android:name=".HomeScreen"
+            android:name=".screen.DeviceListScreen"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".screen.LoginScreen"
             android:exported="true"
             android:theme="@style/Theme.Home_automation">
             <intent-filter>
