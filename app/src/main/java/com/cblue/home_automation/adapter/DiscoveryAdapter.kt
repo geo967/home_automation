@@ -28,7 +28,7 @@ class DiscoveryAdapter : ListAdapter<DiscoveryRecord, DiscoveryAdapter.Discovery
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoveryViewHolder =
         LayoutInflater.from(parent.context)
-            .inflate(R.layout.content_item_discovery, parent, false)
+            .inflate(R.layout.content_device_list, parent, false)
             .let { DiscoveryViewHolder(it) }
 
     override fun getItemCount(): Int = items.size

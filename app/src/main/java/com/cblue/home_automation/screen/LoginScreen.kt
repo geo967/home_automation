@@ -8,12 +8,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
 import com.cblue.home_automation.R
-import com.cblue.home_automation.databinding.LoginActivityBinding
+import com.cblue.home_automation.databinding.ActivityLoginScreenBinding
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -23,7 +22,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 
 class LoginScreen : AppCompatActivity() {
 
-    private lateinit var binding: LoginActivityBinding
+    private lateinit var binding: ActivityLoginScreenBinding
 
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
@@ -37,7 +36,7 @@ class LoginScreen : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = LoginActivityBinding.inflate(layoutInflater)
+        binding = ActivityLoginScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         googleSignInButton = binding.buttonGoogleSignIn

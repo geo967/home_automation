@@ -2,20 +2,17 @@ package com.cblue.home_automation.screen
 
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.cblue.home_automation.R
+import com.cblue.home_automation.databinding.ActivityDeviceDetailsScreenBinding
 import com.cblue.home_automation.model.IpDetails
-import com.cblue.home_automation.databinding.ActivityDeviceDetailsBinding
 
 class DeviceDetailsScreen : AppCompatActivity() {
 
-    private lateinit var binding: ActivityDeviceDetailsBinding
+    private lateinit var binding: ActivityDeviceDetailsScreenBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDeviceDetailsBinding.inflate(layoutInflater)
+        binding = ActivityDeviceDetailsScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val details = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
