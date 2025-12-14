@@ -7,11 +7,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
-import android.util.Log.e
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.edit
 import com.cblue.home_automation.databinding.LoginActivityBinding
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -19,10 +19,6 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.progressindicator.CircularProgressIndicator
-import kotlin.apply
-import kotlin.jvm.java
-import kotlin.text.clear
-import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 

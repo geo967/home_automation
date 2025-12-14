@@ -1,6 +1,7 @@
 package com.cblue.home_automation
 
 import android.net.nsd.NsdServiceInfo
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.properties.Delegates
+import kotlinx.parcelize.Parcelize
 
-class DiscoveryAdapter : RecyclerView.Adapter<DiscoveryViewHolder>() {
+class DiscoveryAdapter : RecyclerView.Adapter<DiscoveryAdapter.DiscoveryViewHolder>() {
+
+    private var onItemClick: ((DiscoveryRecord) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (DiscoveryRecord) -> Unit) {
+        onItemClick = listener
+    }
 
     private fun <T> RecyclerView.Adapter<*>.autoNotify(old: List<T>, new: List<T>, compare: (T, T) -> Boolean) {
         DiffUtil.calculateDiff(object : DiffUtil.Callback() {
@@ -29,13 +37,14 @@ class DiscoveryAdapter : RecyclerView.Adapter<DiscoveryViewHolder>() {
         autoNotify(old, new) { left, right -> left.name == right.name }
     }
 
+  //  private val items = listOf<DiscoveryRecord>(DiscoveryRecord("1212.1212"), DiscoveryRecord("34.2243.3"))
     override fun onBindViewHolder(holder: DiscoveryViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoveryViewHolder =
         LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.content_item_discovery, parent, false)
             .let { DiscoveryViewHolder(it) }
 
     override fun getItemCount(): Int = items.size
@@ -58,20 +67,28 @@ class DiscoveryAdapter : RecyclerView.Adapter<DiscoveryViewHolder>() {
         notifyItemRangeRemoved(0, count)
     }
 
-}
+    inner class DiscoveryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-class DiscoveryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val nameTextView: TextView = itemView.findViewById(R.id.tv_name)
+        private val portTextView: TextView = itemView.findViewById(R.id.tv_port)
 
-    private val nameTextView: TextView = itemView.findViewById(android.R.id.text1)
+        fun bind(discoveryRecord: DiscoveryRecord) {
+            nameTextView.text = discoveryRecord.name
+            portTextView.text = discoveryRecord.address
 
-    fun bind(discoveryRecord: DiscoveryRecord) {
-        nameTextView.text = discoveryRecord.name
+            itemView.setOnClickListener {
+                onItemClick?.invoke(discoveryRecord)
+            }
+        }
+
     }
 
 }
 
+@Parcelize
 data class DiscoveryRecord(
-    val name: String
-)
+    val name: String,
+    val address: String
+): Parcelable
 
-fun NsdServiceInfo.toDiscoveryRecord() = DiscoveryRecord(serviceName)
+fun NsdServiceInfo.toDiscoveryRecord() = DiscoveryRecord(serviceName,port.toString())

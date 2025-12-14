@@ -8,13 +8,14 @@ import com.cblue.home_automation.DiscoveryRecord
 data class DeviceEntity(
     @PrimaryKey
     val name: String,
+    val address:String,
 
     val status: String, // ONLINE / OFFLINE
     val lastSeen: Long
 )
 
 fun DeviceEntity.toDiscoveryRecord() =
-    DiscoveryRecord(name = name)
+    DiscoveryRecord(name = name, address = address)
 
 
 
