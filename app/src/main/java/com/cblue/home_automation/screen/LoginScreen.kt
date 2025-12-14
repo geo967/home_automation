@@ -199,6 +199,7 @@ class LoginScreen : AppCompatActivity() {
                 // No saved credentials found. Launch the One Tap sign-up flow, or
                 // do nothing and continue presenting the signed-out UI.
                 Log.d("TAG", e.localizedMessage)
+                openAddGoogleAccount()
             }
     }
 
@@ -220,6 +221,14 @@ class LoginScreen : AppCompatActivity() {
             button.isEnabled = true
             button.text = "Sign in with Google"
             button.icon = AppCompatResources.getDrawable(this, R.drawable.ic_google_logo)
+        }
+    }
+
+    private fun openAddGoogleAccount() {
+        try {
+            startActivity(Intent(android.provider.Settings.ACTION_ADD_ACCOUNT))
+        } catch (e: Exception) {
+            Log.e("TAG", "Unable to open account settings", e)
         }
     }
 
