@@ -25,7 +25,7 @@ class DiscoveryViewModel(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    private val _loading = MutableLiveData<Boolean>()
+    private val _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean> = _loading
 
     private val _devices = MutableLiveData<List<DiscoveryRecord>>()
@@ -61,7 +61,7 @@ class DiscoveryViewModel(
 
     private fun fetchDeviceDetails(deviceId: String) {
         viewModelScope.launch {
-            _loading.postValue(true)
+            _loading.value = true
             try {
 
                 val ip = getPublicIp()
@@ -75,7 +75,7 @@ class DiscoveryViewModel(
                 _error.postValue(e.message ?: "Something went wrong")
             } finally{
 
-                _loading.postValue(false)
+                _loading.value = false
 
             }
         }

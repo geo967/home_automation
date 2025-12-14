@@ -37,7 +37,6 @@ class LoginScreen : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
