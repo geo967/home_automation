@@ -22,3 +22,4 @@ The App contains 3 screens.
      -- The IP address details are shown in this page.
 
    
+![Screen_recording_20251215_102020](https://github.com/user-attachments/assets/873ecbc7-d3e1-40a2-b9da-9134def8aa0a)
