@@ -1,15 +1,8 @@
 <resources>
     <string name="app_name">Home Automation</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="activity_main_title">Demo</string>
-    <string name="activity_main_status_discovery_on">Discovering</string>
-    <string name="activity_main_status_discovery_off">Disabled</string>
+    <string name="activity_main_status_discovery_on">Discovering...</string>
+    <string name="activity_main_status_discovery_off">Search Device...</string>
     <string name="activity_main_toggle_discovery">Search Devices</string>
 
     <string name="google_server_client_id">
