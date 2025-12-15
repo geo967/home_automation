@@ -1,6 +1,9 @@
 
 The project is about discovering the devices connected to the home network, using the Network Service Discovery (NSD) library.
 
+[ TODO: More Code Optimisation and Remove HardCoding] 
+[Note: Attached video of full app functionality below, It is an emulator recording as no mDNS available in home]
+
 The App contains 3 screens.
 1. Login Screen
        -- The b asic login screen where user can input userid and password, but this way os signin in not implemented since the app focus on Google OAuth SignIn.
